@@ -1,0 +1,181 @@
+---
+title: "Grammar of Graphics"
+author: "Ashrita Dara"
+output:
+  html_document:
+    code_folding: hide
+    toc: TRUE
+    toc_float: TRUE
+editor_options:
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+
+```
+
+## Exercise 1
+
+Created a scatter plot that shows the relationship between pressure and wind.
+
+```{r}
+# YOUR WORK GOES HERE
+
+# dots going negative slope diagonal scattered on outside
+# aes is aesthetic mappings which gives labels,
+# colors, transparency, etc..
+# geom_point is geometric points
+
+ggplot(data = storms) +
+  geom_point(mapping = aes(x = pressure, y = wind, color = category))
+
+```
+
+## Exercise 2
+
+```{r}
+# YOUR WORK GOES HERE
+
+# salmon color is default color
+
+ggplot(data = storms) +
+  geom_point(mapping = aes(x = pressure, y = wind, color = "green"))
+
+
+# put the color outside of aes
+
+ggplot(data = storms) +
+  geom_point(mapping = aes(x = pressure, y = wind), color = "purple", alpha = 0.05)
+
+# 1 / 0.05 is 20 so it takes 20 translucent dots layered on 
+# top of each other to make it solid color
+ggplot(data = storms) +
+  geom_point(mapping = aes(x = pressure, y = wind), color = "purple", alpha = 0.05)
+
+
+```
+
+## Exercise 3
+
+```{r}
+# YOUR WORK GOES HERE
+
+ggplot(data = msleep) +
+  geom_point(mapping = aes(x = bodywt, y = sleep_total), 
+             color = "navy", alpha = 0.4) +
+  scale_x_log10() +
+scale_y_continuous(limits = c(0, NA))
+
+```
+
+## Exercise 4
+
+```{r}
+adequate_sleep <- msleep |>
+  mutate(sleep14 = if_else(
+    condition = sleep_total > 16, 
+    true = "Adequate sleep", 
+    false = "Inadequate sleep")
+  ) |>
+  count(sleep14) |>
+  mutate(prop = n / sum(n))
+
+ggplot(data = adequate_sleep, aes(x = "", y = prop, fill = sleep14)) +
+  geom_col() + 
+  # YOUR WORK GOES HERE\
+  coord_polar(theta = "y") +
+  scale_fill_manual(values = c("Adequate sleep" = "lightgreen", "Inadequate sleep" = "salmon")) +
+  theme_void() # gets rid of unneccesary labels
+
+
+```
+
+## Exercise 5
+
+```{r}
+# YOUR WORK GOES HERE
+
+ggplot(data = storms) +
+  geom_point(mapping = aes(x = pressure, y = wind), 
+             color = "navy", alpha = 0.05) +
+  facet_wrap(~ month)
+
+```
+
+## Exercise 6
+
+```{r}
+# YOUR WORK GOES HERE
+
+# STATISTICAL TRANSFORMATIONS : transform data
+
+ggplot(data = storms) +
+  geom_bar(mapping = aes(x = category))
+
+count(storms, category) %>%
+  ggplot() +
+  geom_col(mapping = aes(x = category, y = n))
+
+```
+
+## Exercise 7
+
+```{r}
+# YOUR WORK GOES HERE
+
+ggplot(data = storms) +
+  geom_bar(mapping = aes(x = category)) +
+  theme_minimal() # makes white background instead of default grey
+
+```
+
+## Exercise 8
+
+```{r}
+# YOUR WORK GOES HERE
+
+# example of layers
+
+storms %>%
+  filter(category > 0) %>% # gets storms greater than 0 because 0 is not a storm
+  distinct(name, year) %>%
+  count(year) %>%
+  ggplot() +
+  geom_line(mapping = aes(x = year, y = n), alpha = 0.5) +
+  geom_point(mapping = aes(x = year, y = n))
+
+```
+
+## Exercise 9
+
+```{r}
+# YOUR WORK GOES HERE
+
+ggplot(data = storms, mapping = aes(x = pressure, y = wind)) +
+       geom_point(mapping = aes(color = category, alpha = 0.05)) +
+       geom_smooth() # put line after the graph or else it will be covered
+
+```
+
+## Exercise 10
+
+```{r}
+# YOUR WORK GOES HERE
+# from exercise 5
+
+ggplot(data = storms) +
+  geom_point(mapping = aes(x = pressure, y = wind), 
+             color = "navy", alpha = 0.05) +
+  facet_wrap(~ month)
+
+ggsave(filename = "favorite-plot.png", width = 6.5, height = 4)
+
+
+```
+
+## Session Info
+
+```{r}
+sessionInfo()
+```
